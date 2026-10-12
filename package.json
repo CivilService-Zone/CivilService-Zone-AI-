@@ -4,15 +4,11 @@
   "private": true,
   "description": "CivilService Zone marketplace and service booking platform",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=20"
-  },
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "express": "^4.21.2",
+    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3"
   }

@@ -6,19 +6,14 @@ fs.mkdirSync(UPLOADS,{recursive:true});
 const DB=path.join(DATA_DIR,'db.json');
 let db={users:[],sessions:[],products:[],orders:[],listings:[],bookings:[],next:{user:1,product:1,listing:1,order:1,booking:1}};
 try{if(fs.existsSync(DB)){const x=JSON.parse(fs.readFileSync(DB,'utf8'));db={...db,...x,next:{...db.next,...(x.next||{})}}}}catch(e){console.error('DB read error',e)}
-function save(){const payload=JSON.stringify(db,null,2);try{fs.writeFileSync(DB,payload)}catch(e){console.error('Local database save failed:',e.message)}if(pgPool&&pgReady){const snapshot=JSON.parse(payload);persistQueue=persistQueue.then(()=>pgPool.query('INSERT INTO csz_app_state(id,payload,updated_at) VALUES(1,$1::jsonb,NOW()) ON CONFLICT(id) DO UPDATE SET payload=EXCLUDED.payload,updated_at=NOW()',[JSON.stringify(snapshot)])).catch(e=>console.error('PostgreSQL save failed:',e.message))}}
-function json(res,s,o){const b=JSON.stringify(o);res.writeHead(s,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Allow-Methods':'GET,POST,PATCH,DELETE,OPTIONS'});res.end(b)}
+function save(){const payload=JSON.stringify(db,null,2);try{fs.writeFileSync(DB,payload)}catch(e){console.error('Local database save failed:',e.message)}if(pgPool&&pgReady){const snapshot=JSON.parse(payload);persistQueue=persistQueue.then(()=>pgPool.query('INSERT INTO csz_app_state(id,payload,updated_at) VALUES(1,$1::jsonb,NOW()) ON CONFLICT(id) DO UPDATE SET payload=EXCLUDED.payload,updated_at=NOW()',[JSON.stringify(snapshot)])).catch(e=>console.error('PostgreSQL save failed:',e.message))}} function json(res,s,o){const b=JSON.stringify(o);res.writeHead(s,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Allow-Methods':'GET,POST,PATCH,DELETE,OPTIONS'});res.end(b)}
 function text(res,s,b,t='text/html; charset=utf-8'){res.writeHead(s,{'Content-Type':t,'Cache-Control':'no-store'});res.end(b)}
 function body(req){return new Promise((resolve,reject)=>{let s='';req.on('data',c=>{s+=c;if(s.length>10*1024*1024){reject(new Error('Payload too large'));req.destroy()}});req.on('end',()=>{try{resolve(s?JSON.parse(s):{})}catch(e){reject(e)}});req.on('error',reject)})}
-function hash(p,s=crypto.randomBytes(16).toString('hex')){return {salt:s,hash:crypto.scryptSync(String(p),s,64).toString('hex')}}
-function verify(p,x){try{return crypto.timingSafeEqual(Buffer.from(hash(p,x.salt).hash,'hex'),Buffer.from(x.hash,'hex'))}catch{return false}}
-function token(){return crypto.randomBytes(32).toString('hex')}
-function safe(u){const x={...u};delete x.password;return x}
-function auth(req){const h=req.headers.authorization||'';if(!h.startsWith('Bearer '))return null;const s=db.sessions.find(x=>x.token===h.slice(7));return s?db.users.find(u=>u.id===s.userId)||null:null}
+function hash(p,s=crypto.randomBytes(16).toString('hex')){return {salt:s,hash:crypto.scryptSync(String(p),s,64).toString('hex')}} function verify(p,x){try{return crypto.timingSafeEqual(Buffer.from(hash(p,x.salt).hash,'hex'),Buffer.from(x.hash,'hex'))}catch{return false}} function token(){return crypto.randomBytes(32).toString('hex')}
+function safe(u){const x={...u};delete x.password;return x} function auth(req){const h=req.headers.authorization||'';if(!h.startsWith('Bearer '))return null;const s=db.sessions.find(x=>x.token===h.slice(7));return s?db.users.find(u=>u.id===s.userId)||null:null}
 function admin(req){const me=auth(req);return me&&me.role==='Admin'?me:null}
 function mime(f){return {'.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp'}[path.extname(f).toLowerCase()]||'application/octet-stream'}
-
-// Shared per-server-instance AI answer cache
+// Shared per-server-instance AI answer cache: avoids repeated API calls for identical questions.
 const AI_CACHE_TTL_MS=Math.max(60_000,Number(process.env.AI_CACHE_TTL_MS)||24*60*60*1000);
 const AI_CACHE_MAX=Math.max(50,Number(process.env.AI_CACHE_MAX)||500);
 const aiAnswerCache=new Map();
@@ -29,18 +24,44 @@ async function ai(q){const question=String(q).trim();if(!question)throw new Erro
 async function aiUncached(q){
  const key=String(process.env.OPENAI_API_KEY||'').trim();
  if(!key)throw new Error('AI सेवा configure नहीं है। Render Environment में OPENAI_API_KEY डालें।');
- const model=String(process.env.OPENAI_MODEL||'gpt-4o-mini').trim();
+ const model=String(process.env.OPENAI_MODEL||'gpt-4.1-mini').trim();
  const systemText='You are CivilService Zone AI assistant. Answer construction, civil engineering, house planning, material, RCC, room, transportation and general questions clearly. Reply in the language used by the user. For structural safety, advise verification by a qualified engineer.';
  let r,j;
- try{r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},signal:AbortSignal.timeout(30000),body:JSON.stringify({model,messages:[{role:'system',content:systemText},{role:'user',content:String(q)}],max_tokens:2048})});j=await r.json().catch(()=>({}));}
- catch(e){throw new Error('OpenAI से कनेक्शन नहीं हो पाया। सर्वर जाँचकर दोबारा कोशिश करें।')}
- if(!r.ok){const msg=j.error?.message||('OpenAI API request failed ('+r.status+').');if(r.status===401)throw new Error('OPENAI_API_KEY गलत या inactive है। Render Environment में key जाँचें।');if(r.status===429)throw new Error('OpenAI API quota/rate limit पूरी है। OpenAI Platform में billing और usage limits जाँचें।');throw new Error(msg)}
+ try{
+  r=await fetch('https://api.openai.com/v1/chat/completions',{
+   method:'POST',
+   headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+   signal:AbortSignal.timeout(30000),
+   body:JSON.stringify({model,messages:[{role:'system',content:systemText},{role:'user',content:String(q)}],max_tokens:2048})
+  });
+  j=await r.json().catch(()=>({}));
+ }catch(e){
+  console.error('OpenAI request connection error:',e&&e.message?e.message:e);
+  throw new Error('OpenAI से कनेक्शन नहीं हो पाया। Render server और network logs जाँचकर दोबारा कोशिश करें।');
+ }
+ if(!r.ok){
+  const apiMessage=String(j?.error?.message||'').trim();
+  const errorCode=String(j?.error?.code||'').toLowerCase();
+  const errorType=String(j?.error?.type||'').toLowerCase();
+  console.error('OpenAI API error:',r.status,errorCode||errorType,apiMessage);
+  if(r.status===401)throw new Error('OPENAI_API_KEY गलत, inactive या revoke की गई है। Render Environment में key जाँचें।');
+  if(r.status===429){
+   if(errorCode.includes('insufficient_quota')||errorType.includes('insufficient_quota')||/quota|billing|credits/i.test(apiMessage))
+    throw new Error('OpenAI API की उपलब्ध billing/credits quota पूरी है। OpenAI Platform में Billing और Usage जाँचें।');
+   throw new Error('OpenAI API rate limit लगी है। थोड़ी देर बाद दोबारा कोशिश करें।');
+  }
+  if(r.status===400)throw new Error('OpenAI request स्वीकार नहीं हुई: '+(apiMessage||'model या request settings जाँचें।'));
+  if(r.status===403)throw new Error('OpenAI API access अनुमति नहीं मिली। Project, model access और API key permissions जाँचें।');
+  if(r.status===404)throw new Error('OpenAI endpoint या model नहीं मिला। Render में OPENAI_MODEL को gpt-4.1-mini जाँचें।');
+  throw new Error(apiMessage||('OpenAI API request failed ('+r.status+').'));
+ }
  const answer=String(j?.choices?.[0]?.message?.content||'').trim();
- if(!answer)throw new Error('OpenAI से खाली जवाब मिला। कृपया सवाल बदलकर दोबारा कोशिश करें।');return answer;
+ if(!answer)throw new Error('OpenAI से खाली जवाब मिला। कृपया सवाल बदलकर दोबारा पूछें।');
+ return answer;
 }
 
 const server=http.createServer(async(req,res)=>{try{const u=url.parse(req.url,true),p=u.pathname;if(req.method==='OPTIONS')return json(res,204,{});
-if(p==='/api/health')return json(res,200,{ok:true,service:'CivilService Zone V6',aiConfigured:Boolean(String(process.env.OPENAI_API_KEY||'').trim()),aiModel:process.env.OPENAI_MODEL||'gpt-4o-mini',databaseConfigured:Boolean(pgPool),databaseReady:pgReady,time:new Date().toISOString()});
+if(p==='/api/health')return json(res,200,{ok:true,service:'CivilService Zone V6',aiConfigured:Boolean(String(process.env.OPENAI_API_KEY||'').trim()),aiModel:process.env.OPENAI_MODEL||'gpt-4.1-mini',databaseConfigured:Boolean(pgPool),databaseReady:pgReady,time:new Date().toISOString()});
 if(p==='/api/auth/register'&&req.method==='POST'){const x=await body(req),role=['Customer','Seller','Provider'].includes(x.role)?x.role:'Customer',mobile=String(x.mobile||'').replace(/\D/g,''),email=String(x.email||'').trim().toLowerCase(),address=String(x.address||'').trim(),pincode=String(x.pincode||'').replace(/\D/g,'');if(String(x.name||'').trim().length<2||!/^[0-9]{10}$/.test(mobile)||!address)return json(res,400,{error:'Name, valid 10-digit mobile and full address required.'});if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return json(res,400,{error:'Valid email ID डालें।'});if(pincode&&!/^[0-9]{6}$/.test(pincode))return json(res,400,{error:'PIN code must be 6 digits.'});if(!email&&!mobile)return json(res,400,{error:'Mobile or email is required.'});if(db.users.some(a=>a.mobile===mobile&&a.role===role))return json(res,409,{error:'This mobile is already registered for this role.'});if(email&&db.users.some(a=>String(a.email||'').toLowerCase()===email&&a.role===role))return json(res,409,{error:'This email is already registered for this role.'});const u={id:db.next.user++,name:String(x.name).trim(),mobile,email,place:String(x.place||''),address,pincode,latitude:x.latitude?Number(x.latitude):null,longitude:x.longitude?Number(x.longitude):null,role,referralCode:String(x.referralCode||''),createdAt:new Date().toISOString()};db.users.push(u);const t=token();db.sessions.push({token:t,userId:u.id,createdAt:new Date().toISOString()});save();return json(res,200,{token:t,user:safe(u)})}
 if(p==='/api/auth/login'&&req.method==='POST'){const x=await body(req),identifier=String(x.identifier||x.mobile||x.email||'').trim(),email=identifier.toLowerCase(),mobile=identifier.replace(/\D/g,''),byEmail=x.loginBy==='email'||identifier.includes('@');if(!identifier)return json(res,400,{error:'Registered mobile number or email is required.'});const matches=db.users.filter(a=>byEmail?String(a.email||'').toLowerCase()===email:a.mobile===mobile);const u=matches.find(a=>a.role===x.role)||(matches.length===1?matches[0]:null);if(!u)return json(res,401,{error:matches.length?'इस contact पर कई role accounts हैं। सही role चुनें।':'इस mobile/email पर registered account नहीं मिला।'});const t=token();db.sessions.push({token:t,userId:u.id,createdAt:new Date().toISOString()});save();return json(res,200,{token:t,user:safe(u)})}
 if(p==='/api/auth/admin'&&req.method==='POST'){const x=await body(req);const key=process.env.ADMIN_KEY;if(!key)return json(res,503,{error:'Admin login disabled: set ADMIN_KEY in Render Environment first.'});if(String(x.key||'')!==key)return json(res,401,{error:'Invalid owner key'});let u=db.users.find(a=>a.role==='Admin');if(!u){u={id:db.next.user++,name:'Ranjan Kumar',mobile:'',role:'Admin',password:hash(crypto.randomUUID()),createdAt:new Date().toISOString()};db.users.push(u)}const t=token();db.sessions.push({token:t,userId:u.id,createdAt:new Date().toISOString()});save();return json(res,200,{token:t,user:safe(u)})}
@@ -67,6 +88,7 @@ if(p==='/api/admin/data'&&req.method==='GET'){if(!admin(req))return json(res,403
 if(p==='/api/ai/ask'&&req.method==='POST'){const x=await body(req);if(!x.question)return json(res,400,{error:'Question required'});try{return json(res,200,{answer:await ai(x.question)})}catch(e){return json(res,502,{error:e.message||'AI service error'})}}
 if(p.startsWith('/uploads/')){const f=path.basename(p),full=path.join(UPLOADS,f);if(!full.startsWith(UPLOADS)||!fs.existsSync(full))return text(res,404,'Not found','text/plain');return fs.readFile(full,(e,b)=>e?text(res,404,'Not found','text/plain'):text(res,200,b,mime(f)))}
 if(p.startsWith('/api/'))return json(res,404,{error:'API route not found'});
+// Serve the website home page even if the files were uploaded into a common subfolder.
 function findHomeFile(){
  const direct=[path.join(ROOT,'public','index.html'),path.join(ROOT,'index.html'),path.join(ROOT,'dist','index.html'),path.join(ROOT,'build','index.html'),path.join(ROOT,'client','index.html'),path.join(ROOT,'client','public','index.html')];
  for(const f of direct){try{if(fs.existsSync(f)&&fs.statSync(f).isFile())return f}catch{}}
@@ -82,6 +104,6 @@ const homeFile=findHomeFile();
 if(homeFile)return text(res,200,fs.readFileSync(homeFile),'text/html; charset=utf-8');
 console.error('Website home page not found. Expected public/index.html or index.html under:',ROOT);
 return text(res,500,'CivilService Zone website file missing. Ensure public/index.html (or index.html) is uploaded to the same Render Root Directory as server.js.','text/plain; charset=utf-8');
-}catch(e){console.error(e);if(!res.headersSent)json(res,500,{error:e.message||'Server error'})}}
+}catch(e){console.error(e);if(!res.headersSent)json(res,500,{error:e.message||'Server error'})}});
 async function start(){if(pgPool){try{await pgPool.query('CREATE TABLE IF NOT EXISTS csz_app_state (id INTEGER PRIMARY KEY, payload JSONB NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())');const result=await pgPool.query('SELECT payload FROM csz_app_state WHERE id=1');if(result.rows[0]?.payload){db={...db,...result.rows[0].payload,next:{...db.next,...(result.rows[0].payload.next||{})}};try{fs.writeFileSync(DB,JSON.stringify(db,null,2))}catch{}}else{await pgPool.query('INSERT INTO csz_app_state(id,payload,updated_at) VALUES(1,$1::jsonb,NOW()) ON CONFLICT(id) DO NOTHING',[JSON.stringify(db)])}pgReady=true;console.log('Persistent PostgreSQL database connected.')}catch(e){console.error('DATABASE_URL is configured but PostgreSQL initialization failed:',e.message);process.exitCode=1;return}}else{console.warn('DATABASE_URL is not set. Data is stored only in local JSON and may be lost on Render free services.')}server.listen(PORT,()=>console.log(`CivilService Zone V6 running on ${PORT}`))}
 start();
