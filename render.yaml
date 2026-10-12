@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: civilservice-zone
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: OWNER_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
