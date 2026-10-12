@@ -28,9 +28,11 @@ async function aiUncached(q){
  const systemText='You are CivilService Zone AI assistant. Answer construction, civil engineering, house planning, material, RCC, room, transportation and general questions clearly. Reply in the language used by the user. For structural safety, advise verification by a qualified engineer.';
  let r,j;
  try{r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},signal:AbortSignal.timeout(30000),body:JSON.stringify({model,messages:[{role:'system',content:systemText},{role:'user',content:String(q)}],max_tokens:2048})});j=await r.json().catch(()=>({}));}
- catch(e){throw new Error('OpenAI से कनेक्शन नहीं हो पाया। सर्वर जाँचकर दोबारा कोशिश करें।')}
- if(!r.ok){const msg=j.error?.message||('OpenAI API request failed ('+r.status+').');if(r.status===401)throw new Error('OPENAI_API_KEY गलत या inactive है। Render Environment में key जाँचें।');if(r.status===429)throw new Error('OpenAI API quota/rate limit पूरी है। OpenAI Platform में billing और usage limits जाँचें।');throw new Error(msg)}
- const answer=String(j.output_text|| (j.output||[]).flatMap(o=>o.content||[]).filter(c=>c.type==='output_text').map(c=>c.text||'').join('\n')).trim();
+catch(e){throw new Error('OpenAI से कनेक्शन नहीं हो पाया। सर्वर जाँचकर दोबारा कोशिश करें।')}
+if(!r.ok){const msg=j.error?.message||('OpenAI API request failed ('+r.status+').');if(r.status===401)throw new Error('OPENAI_API_KEY गलत या inactive है। Render Environment में key जाँचें।');if(r.status===429)throw new Error('OpenAI API quota/rate limit पूरी है। OpenAI Platform में billing और usage limits जाँचें।');throw new Error(msg)}
+const answer=String(j?.choices?.[0]?.message?.content||'').trim();
+if(!answer)throw new Error('OpenAI से खाली जवाब मिला। कृपया सवाल बदलकर दोबारा पूछें।');return answer;
+
  if(!answer)throw new Error('OpenAI से खाली जवाब मिला। कृपया सवाल बदलकर दोबारा कोशिश करें।');return answer;
 }
 const server=http.createServer(async(req,res)=>{try{const u=url.parse(req.url,true),p=u.pathname;if(req.method==='OPTIONS')return json(res,204,{});
