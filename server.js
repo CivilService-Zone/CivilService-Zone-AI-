@@ -37,7 +37,7 @@ async function aiUncached(q){
   j=await r.json().catch(()=>({}));
  }catch(e){
   console.error('OpenAI request connection error:',e&&e.message?e.message:e);
-  throw new Error('OpenAI से कनेक्शन नहीं हो पाया। Render server और network logs जाँचकर दोबारा कोशिश करें।');
+  throw new Error('आपको इसका paid version लेना hoga contact-7856815062.');
  }
  if(!r.ok){
   const apiMessage=String(j?.error?.message||'').trim();
@@ -47,12 +47,12 @@ async function aiUncached(q){
   if(r.status===401)throw new Error('OPENAI_API_KEY गलत, inactive या revoke की गई है। Render Environment में key जाँचें।');
   if(r.status===429){
    if(errorCode.includes('insufficient_quota')||errorType.includes('insufficient_quota')||/quota|billing|credits/i.test(apiMessage))
-    throw new Error('OpenAI API की उपलब्ध billing/credits quota पूरी है। OpenAI Platform में Billing और Usage जाँचें।');
-   throw new Error('OpenAI API rate limit लगी है। थोड़ी देर बाद दोबारा कोशिश करें।');
+    throw new Error('अपना Usage जाँचें।');
+   throw new Error('Zone AI rate limit लगी है। थोड़ी देर बाद दोबारा कोशिश करें।');
   }
   if(r.status===400)throw new Error('OpenAI request स्वीकार नहीं हुई: '+(apiMessage||'model या request settings जाँचें।'));
   if(r.status===403)throw new Error('OpenAI API access अनुमति नहीं मिली। Project, model access और API key permissions जाँचें।');
-  if(r.status===404)throw new Error('OpenAI endpoint या model नहीं मिला। Render में OPENAI_MODEL को gpt-4.1-mini जाँचें।');
+  if(r.status===404)throw new Error('OpenAI endpoint या model नहीं मिला। Render में OPENAI_MODEL को gpt-4o-mini जाँचें।');
   throw new Error(apiMessage||('OpenAI API request failed ('+r.status+').'));
  }
  const answer=String(j?.choices?.[0]?.message?.content||'').trim();
@@ -61,7 +61,7 @@ async function aiUncached(q){
 }
 
 const server=http.createServer(async(req,res)=>{try{const u=url.parse(req.url,true),p=u.pathname;if(req.method==='OPTIONS')return json(res,204,{});
-if(p==='/api/health')return json(res,200,{ok:true,service:'CivilService Zone V6',aiConfigured:Boolean(String(process.env.OPENAI_API_KEY||'').trim()),aiModel:process.env.OPENAI_MODEL||'gpt-4.1-mini',databaseConfigured:Boolean(pgPool),databaseReady:pgReady,time:new Date().toISOString()});
+if(p==='/api/health')return json(res,200,{ok:true,service:'CivilService Zone V6',aiConfigured:Boolean(String(process.env.OPENAI_API_KEY||'').trim()),aiModel:process.env.OPENAI_MODEL||'gpt-4o-mini',databaseConfigured:Boolean(pgPool),databaseReady:pgReady,time:new Date().toISOString()});
 if(p==='/api/auth/register'&&req.method==='POST'){const x=await body(req),role=['Customer','Seller','Provider'].includes(x.role)?x.role:'Customer',mobile=String(x.mobile||'').replace(/\D/g,''),email=String(x.email||'').trim().toLowerCase(),address=String(x.address||'').trim(),pincode=String(x.pincode||'').replace(/\D/g,'');if(String(x.name||'').trim().length<2||!/^[0-9]{10}$/.test(mobile)||!address)return json(res,400,{error:'Name, valid 10-digit mobile and full address required.'});if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return json(res,400,{error:'Valid email ID डालें।'});if(pincode&&!/^[0-9]{6}$/.test(pincode))return json(res,400,{error:'PIN code must be 6 digits.'});if(!email&&!mobile)return json(res,400,{error:'Mobile or email is required.'});if(db.users.some(a=>a.mobile===mobile&&a.role===role))return json(res,409,{error:'This mobile is already registered for this role.'});if(email&&db.users.some(a=>String(a.email||'').toLowerCase()===email&&a.role===role))return json(res,409,{error:'This email is already registered for this role.'});const u={id:db.next.user++,name:String(x.name).trim(),mobile,email,place:String(x.place||''),address,pincode,latitude:x.latitude?Number(x.latitude):null,longitude:x.longitude?Number(x.longitude):null,role,referralCode:String(x.referralCode||''),createdAt:new Date().toISOString()};db.users.push(u);const t=token();db.sessions.push({token:t,userId:u.id,createdAt:new Date().toISOString()});save();return json(res,200,{token:t,user:safe(u)})}
 if(p==='/api/auth/login'&&req.method==='POST'){const x=await body(req),identifier=String(x.identifier||x.mobile||x.email||'').trim(),email=identifier.toLowerCase(),mobile=identifier.replace(/\D/g,''),byEmail=x.loginBy==='email'||identifier.includes('@');if(!identifier)return json(res,400,{error:'Registered mobile number or email is required.'});const matches=db.users.filter(a=>byEmail?String(a.email||'').toLowerCase()===email:a.mobile===mobile);const u=matches.find(a=>a.role===x.role)||(matches.length===1?matches[0]:null);if(!u)return json(res,401,{error:matches.length?'इस contact पर कई role accounts हैं। सही role चुनें।':'इस mobile/email पर registered account नहीं मिला।'});const t=token();db.sessions.push({token:t,userId:u.id,createdAt:new Date().toISOString()});save();return json(res,200,{token:t,user:safe(u)})}
 if(p==='/api/auth/admin'&&req.method==='POST'){const x=await body(req);const key=process.env.ADMIN_KEY;if(!key)return json(res,503,{error:'Admin login disabled: set ADMIN_KEY in Render Environment first.'});if(String(x.key||'')!==key)return json(res,401,{error:'Invalid owner key'});let u=db.users.find(a=>a.role==='Admin');if(!u){u={id:db.next.user++,name:'Ranjan Kumar',mobile:'',role:'Admin',password:hash(crypto.randomUUID()),createdAt:new Date().toISOString()};db.users.push(u)}const t=token();db.sessions.push({token:t,userId:u.id,createdAt:new Date().toISOString()});save();return json(res,200,{token:t,user:safe(u)})}
