@@ -23,8 +23,8 @@ function trimAiCache(){const now=Date.now();for(const [k,v] of aiAnswerCache){if
 async function ai(q){const question=String(q).trim();if(!question)throw new Error('कृपया अपना सवाल लिखें।');trimAiCache();const cacheKey=aiCacheKey(question),cached=aiAnswerCache.get(cacheKey);if(cached&&cached.expiresAt>Date.now()){aiAnswerCache.delete(cacheKey);aiAnswerCache.set(cacheKey,cached);return cached.answer}if(aiInFlight.has(cacheKey))return aiInFlight.get(cacheKey);const task=aiUncached(question).then(answer=>{aiAnswerCache.set(cacheKey,{answer,expiresAt:Date.now()+AI_CACHE_TTL_MS});trimAiCache();return answer}).finally(()=>aiInFlight.delete(cacheKey));aiInFlight.set(cacheKey,task);return task}
 async function aiUncached(q){
  const key=String(process.env.OPENAI_API_KEY||'').trim();
- if(!key)throw new Error('AI सेवा configure नहीं है। Render Environment में OPENAI_API_KEY डालें।');
- const model=String(process.env.OPENAI_MODEL||'gpt-4.1-mini').trim();
+ if(!key)throw new Error('अभी हमारे workers AI पर काम कर rahe hai थोड़ा wait kare By-Ranjan kumar।');
+ const model=String(process.env.OPENAI_MODEL||'gpt-4o-mini').trim();
  const systemText='You are CivilService Zone AI assistant. Answer construction, civil engineering, house planning, material, RCC, room, transportation and general questions clearly. Reply in the language used by the user. For structural safety, advise verification by a qualified engineer.';
  let r,j;
  try{
@@ -44,7 +44,7 @@ async function aiUncached(q){
   const errorCode=String(j?.error?.code||'').toLowerCase();
   const errorType=String(j?.error?.type||'').toLowerCase();
   console.error('OpenAI API error:',r.status,errorCode||errorType,apiMessage);
-  if(r.status===401)throw new Error('OPENAI_API_KEY गलत, inactive या revoke की गई है। Render Environment में key जाँचें।');
+  if(r.status===401)throw new Error('अभी CivilService Zone-AI पर काम हो रहे हैं इसलिए दुबारा फिर se कोशिश kare या fir 7856815062 पर बात करें।');
   if(r.status===429){
    if(errorCode.includes('insufficient_quota')||errorType.includes('insufficient_quota')||/quota|billing|credits/i.test(apiMessage))
     throw new Error('अपना Usage जाँचें।');
