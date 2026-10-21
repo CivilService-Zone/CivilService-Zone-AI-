@@ -194,6 +194,13 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
 </head>
 <body>
+<!-- CivilService Zone PWA install banner -->
+<div id="csz-pwa-install-bar" role="region" aria-label="Install CivilService Zone app" style="position:fixed;top:8px;right:8px;z-index:9999;display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid #d7e3f2;border-radius:999px;padding:6px 8px 6px 12px;box-shadow:0 5px 22px #071d3833;font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:calc(100vw - 16px)">
+  <span style="font-size:12px;font-weight:800;color:#123b70;white-space:nowrap">CivilService Zone</span>
+  <button id="csz-pwa-install-button" type="button" style="border:0;border-radius:999px;background:#0757a8;color:#fff;font-size:13px;font-weight:800;padding:9px 13px;cursor:pointer;white-space:nowrap">Install Now</button>
+  <button id="csz-pwa-dismiss-button" type="button" aria-label="Hide install banner" title="Hide" style="border:0;background:transparent;color:#52657c;font-size:20px;line-height:1;padding:3px 5px;cursor:pointer">×</button>
+</div>
+
 <!-- Registration -->
 <section class="auth" id="register">
 <div class="authbox">
@@ -2506,5 +2513,52 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<script>
+(() => {
+  let deferredInstallPrompt = null;
+  const bar = document.getElementById('csz-pwa-install-bar');
+  const installButton = document.getElementById('csz-pwa-install-button');
+  const dismissButton = document.getElementById('csz-pwa-dismiss-button');
+  if (!bar || !installButton || !dismissButton) return;
+
+  // Keep the banner available on the home page and let users dismiss it.
+  dismissButton.addEventListener('click', () => { bar.style.display = 'none'; });
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.textContent = 'Install Now';
+    installButton.disabled = false;
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    installButton.textContent = 'Installed';
+    installButton.disabled = true;
+  });
+
+  installButton.addEventListener('click', async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      try {
+        const choice = await deferredInstallPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          installButton.textContent = 'Installing…';
+        }
+      } catch (error) {
+        console.error('PWA install prompt failed:', error);
+      }
+      deferredInstallPrompt = null;
+      return;
+    }
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      alert('CivilService Zone पहले से ऐप की तरह खुल रहा है।');
+    } else {
+      alert('अभी Chrome ने इस वेबसाइट के लिए Install Prompt उपलब्ध नहीं कराया। पहले नई PWA फाइलें GitHub पर सही Root Directory में अपलोड करके Render Deployment पूरा करें। फिर Chrome में वेबसाइट खोलें और पेज Refresh करें। अगर फिर भी Install न हो, Chrome के ⋮ मेन्यू में “Add to Home screen” देखें।');
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
