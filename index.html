@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CivilService Zone — Professional Civil Services</title>
+<title>CivilService Zone</title>
 <style>
 :root{--blue:#0757a8;--blue2:#087ff0;--green:#10b957;--orange:#f47708;--ink:#10233f;--muted:#6b7d91;--bg:#f4f7fb;--card:#fff;--line:#dfe8f2;--shadow:0 12px 32px rgba(16,35,63,.09)}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select{font:inherit}
@@ -186,6 +186,12 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
 .modalBox{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;margin:auto 0}
 @media(max-width:600px){.modal{padding:10px;align-items:flex-start}.modalBox{width:100%;max-height:calc(100dvh - 20px);padding:18px;border-radius:16px}}
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#123b70">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CivilService Zone">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
 </head>
 <body>
 <!-- Registration -->
@@ -2493,5 +2499,12 @@ window.bookingsPage = function(){
 })();
 </script>
 
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch(err => console.error('PWA service worker registration failed:', err));
+  });
+}
+</script>
 </body>
 </html>
