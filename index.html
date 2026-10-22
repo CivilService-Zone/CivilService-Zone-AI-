@@ -196,8 +196,8 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
 <body>
 <!-- CivilService Zone PWA install banner -->
 <div id="csz-pwa-install-bar" role="region" aria-label="Install CivilService Zone app" style="position:fixed;top:8px;right:8px;z-index:9999;display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid #d7e3f2;border-radius:999px;padding:6px 8px 6px 12px;box-shadow:0 5px 22px #071d3833;font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:calc(100vw - 16px)">
-  <span style="font-size:12px;font-weight:800;color:#123b70;white-space:nowrap">CivilService Zone</span>
-  <button id="csz-pwa-install-button" type="button" style="border:0;border-radius:999px;background:#0757a8;color:#fff;font-size:13px;font-weight:800;padding:9px 13px;cursor:pointer;white-space:nowrap">Install Now</button>
+  
+  <button id="csz-pwa-install-button" type="button" style="border:0;border-radius:999px;background:#0757a8;color:#fff;font-size:13px;font-weight:800;padding:9px 13px;cursor:pointer;white-space:nowrap">Install now</button>
   <button id="csz-pwa-dismiss-button" type="button" aria-label="Hide install banner" title="Hide" style="border:0;background:transparent;color:#52657c;font-size:20px;line-height:1;padding:3px 5px;cursor:pointer">×</button>
 </div>
 
@@ -229,10 +229,10 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
 <button type="button" class="loginMode" id="loginByEmailBtn" onclick="setLoginMode('email')">✉️ Email Login</button>
 </div>
 <div class="field" id="loginMobileWrap"><label>Registered Mobile Number</label><input id="loginMobile" maxlength="10" inputmode="numeric" autocomplete="tel" placeholder="Enter the same mobile used at registration"/></div>
-<div class="field"><label>Password (Provider account, if set)</label><input id="loginPassword" type="password" inputmode="numeric" maxlength="4" placeholder="4 digit password" autocomplete="current-password"/></div>
+<div class="field"><label>4 Digit Password (सभी accounts के लिए जरूरी)</label><input id="loginPassword" type="password" inputmode="numeric" maxlength="4" placeholder="4 digit password" autocomplete="current-password"/></div>
 <div class="field hidden" id="loginEmailWrap"><label>Registered Email ID</label><input id="loginEmail" type="email" autocomplete="email" placeholder="Enter the same email used at registration"/></div>
 <button class="btn primary" onclick="doLogin()">Login to Registered Account</button>
-<div class="loginRule">Registered mobile/Gmail और सही role चुनें। Provider account के लिए वही 4 digit password डालें।</div>
+<div class="loginRule">Registered mobile/Gmail और सही role चुनें। सभी roles में registration वाला वही 4 digit password डालें।</div>
 <p style="text-align:center">New user? <button class="link" onclick="showRegister()">Register</button></p>
 <div class="ownerGate"><button onclick="ownerAccess()">🔐 Owner / Admin Access</button></div>
 </div>
@@ -261,14 +261,13 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
 <h2>Complete Registration</h2><p style="color:var(--muted)">Your name and mobile will be saved to your account on the server.</p>
 <div class="field"><label>Full Name</label><input id="regName" placeholder="Enter your name"/></div>
 <div class="field" style="margin-top:10px"><label>Mobile Number</label><input id="regMobile" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"/></div>
-<div class="field" style="margin-top:10px"><label>4 Digit Password (Provider/Engineer login)</label><input id="regPassword" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Provider के लिए 4 digit password" autocomplete="new-password"/></div>
-<div class="field" style="margin-top:10px"><label>Email ID</label><input id="regEmail" type="email" autocomplete="email" placeholder="Enter registered email ID"/></div>
+<div class="field" style="margin-top:10px"><label>4 Digit Password (सभी roles के लिए जरूरी)</label><input id="regPassword" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" required inputmode="numeric" placeholder="4 अंकों का password" autocomplete="new-password"/></div>
 <div class="field" style="margin-top:10px"><label>Email ID / Gmail (optional)</label><input id="regEmail" type="email" autocomplete="email" placeholder="name@gmail.com"/></div>
 <div class="field" style="margin-top:10px"><label>Full Address *</label><textarea id="regAddress" rows="2" placeholder="House/flat, street, village/area, landmark" required></textarea></div>
 <div class="toolbar" style="margin-top:10px"><div class="field"><label>City / District</label><input id="regPlace" placeholder="City / District"/></div><div class="field"><label>PIN Code</label><input id="regPincode" inputmode="numeric" maxlength="6" placeholder="6 digit PIN code"/></div></div>
 <div class="field" style="margin-top:10px"><button type="button" class="btn" onclick="cszGetLiveAddress()">📍 Use My Live Location</button><small id="regLiveStatus" aria-live="polite">Live location optional है; button दबाने पर browser permission मांगेगा।</small><input id="regLatitude" type="hidden"><input id="regLongitude" type="hidden"></div>
 <div class="field" style="margin-top:10px"><label>Referral ID / Code (optional)</label><input id="regReferral" maxlength="20" placeholder="Example: CSZ123456"/></div>
-<div class="notice">Password की जरूरत नहीं है। Mobile/Gmail से account खुलेगा। ध्यान दें: बिना OTP के passwordless login में account ownership verify नहीं होती।</div>
+<div class="notice">अपना 4 अंकों का password याद रखें। इसी mobile और password से केवल उसी role में login होगा।</div>
 <div class="actions"><button class="btn primary" onclick="completeRegistration()">Register &amp; Continue</button><button class="btn" onclick="closeModal('regModal')">Cancel</button></div></div></div>
 <!-- Owner modal -->
 <div class="modal hidden" id="ownerModal"><div class="modalBox">
@@ -992,12 +991,12 @@ function plansPage(){
   window.doLogin=function(){const selectedRole=role;let value='';if(cszLoginMode==='email'){value=(document.getElementById('loginEmail')?.value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))return alert('Valid registered Email ID डालें।')}else{value=(document.getElementById('loginMobile')?.value||'').trim();if(!/^\d{10}$/.test(value))return alert('10 digit registered mobile number डालें।')}const user=users.find(x=>x.role===selectedRole&&(cszLoginMode==='email'?String(x.email||'').toLowerCase()===value:x.mobile===value));if(!user)return alert('Login failed: यह registered account नहीं है। सही mobile/email और role डालें।');currentUser=user;hide('login');show('app');applyUser();buildNav();if(!history.state?.cszPage)history.replaceState({cszPage:selectedRole==='Customer'?'dashboard':selectedRole==='Provider'?'provider':'seller'},'', '#'+(selectedRole==='Customer'?'dashboard':selectedRole==='Provider'?'provider':'seller'));render(selectedRole==='Customer'?'dashboard':selectedRole==='Provider'?'provider':'seller');wireLogos();};
 
   // WhatsApp section styling/text requested.
-  window.contact=function(){const msg='Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';return `<a class="btn green" href="tel:${PHONE}">📞 Contact Now</a><a class="btn csz-wa-text" target="_blank" href="https://wa.me/917856815062?text=${encodeURIComponent(msg)}">💬 Dear <span style="color:#168a45;font-weight:900">RANJAN KUMAR</span>. I have enquiry related to <span style="color:#0757a8;font-weight:900">CIVILSERVICE ZONE</span></a>`};
+  window.contact=function(){const msg='Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';return `<a class="btn green" href="tel:${PHONE}">📞 Contact Now</a><a class="btn csz-wa-text" target="_blank" href="https://wa.me/917856815062?text=${encodeURIComponent(msg)}">💬 Dear <span style="color:#168a45;font-weight:900">RANJAN KUMAR</span>. I have enquiry related to <span style="color:#0757a8;font-weight:900">CIVILSERVICE ZONE</span></a>`};
     // Exact top branding requested.
   function fixBranding(){
     document.querySelectorAll('body *').forEach(el=>{if(el.children.length===0&&el.textContent.trim()==='SABSE SMART CONSTRUCTION PLATFORM')el.textContent='SMART CONSTRUCTION PLATFORM';});
     document.querySelectorAll('.heroTag').forEach(el=>{el.innerHTML='घर बनाने से लेकर रहने तक — सभी Civil Services एक जगह!';});
-    const waText='Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';
+    const waText='Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';
     document.querySelectorAll('.wa,a[href*="wa.me"]').forEach(a=>{if(a.href.includes('7856815062'))a.href='https://wa.me/917856815062?text='+encodeURIComponent(waText);});
     // Requested green RANJAN KUMAR and blue CIVILSERVICE ZONE in WhatsApp area text.
     const wa=document.querySelector('.wa');if(wa)wa.title=waText;
@@ -1279,7 +1278,7 @@ html,body{margin:0!important;padding:0!important}
 
   /* ---------- Correct WhatsApp section ---------- */
   window.contact=function(){
-    const msg='Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';
+    const msg='Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';
     return `<a class="btn csz-wa-text" target="_blank" href="https://wa.me/917856815062?text=${encodeURIComponent(msg)}">💬 Dear <span style="color:#168a45;font-weight:900">RANJAN KUMAR</span>. I have enquiry related to <span style="color:#0757a8;font-weight:900">CIVILSERVICE ZONE</span></a>`;
   };
 
@@ -1364,7 +1363,7 @@ html,body{margin:0!important;padding:0!important}
 <script>
 /* ===== CSZ: request-only final patch ===== */
 (function(){
-  const WA='Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';
+  const WA='Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';
   const WAHREF='https://wa.me/917856815062?text='+encodeURIComponent(WA);
 
   /* Registration logo remains exactly the registration logo; login gets that same logo only. */
@@ -1451,7 +1450,7 @@ html,body{margin:0!important;padding:0!important}
 </style>
 <script>
 (function(){
-  const WA='Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';
+  const WA='Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';
   const waHref='https://wa.me/917856815062?text='+encodeURIComponent(WA);
 
   /* Login must use exactly the same logo currently shown in Registration. */
@@ -1555,7 +1554,7 @@ html,body{margin:0!important;padding:0!important}
 </style>
 <script>
 (function(){
-const WA='Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';
+const WA='Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';
 const WAH='https://wa.me/917856815062?text='+encodeURIComponent(WA);
 let currentRoute='';
 function syncAuthLogos(){const reg=document.querySelector('#register .authLogo'),login=document.querySelector('#login .authLogo');if(reg&&login){login.src=reg.currentSrc||reg.src;login.srcset='';}document.querySelectorAll('.authLogo,.brand .miniLogo,.profileLogo').forEach(img=>{img.style.borderRadius='50%';img.style.objectFit='cover';img.setAttribute('onclick','openCszLogo(this)');img.setAttribute('role','button');img.setAttribute('tabindex','0');});}
@@ -1593,7 +1592,7 @@ img{cursor:pointer!important;touch-action:manipulation!important}
 </style>
 <script>
 (function(){
-  const CSZ_WA_TEXT='*RANJAN KUMAR* Dear *RANJAN KUMAR*. I have enquiry related to CIVILSERVICE ZONE';
+  const CSZ_WA_TEXT='*RANJAN KUMAR* Hello. Dear RANJAN SIR. I have inquiry related to CivilService Zone.';
   const CSZ_WA_HREF='https://wa.me/917856815062?text='+encodeURIComponent(CSZ_WA_TEXT);
 
   function authIsOpen(){
@@ -2389,7 +2388,7 @@ async function api(path,opt={}){opt.headers=Object.assign({'Content-Type':'appli
 window.cszV6Api=api;
 function syncUser(u){currentUser=u;window.users=window.users||[];users=users.filter(x=>String(x.id)!==String(u.id));users.push(u);try{localStorage.setItem('cch_users',JSON.stringify(users))}catch(e){}}
 window.cszGetLiveAddress=async function(){const status=document.getElementById('regLiveStatus');if(!navigator.geolocation){if(status)status.textContent='इस browser में location उपलब्ध नहीं है। Address manually भरें।';return}if(status)status.textContent='आपकी अनुमति का इंतजार है…';navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;document.getElementById('regLatitude').value=lat;document.getElementById('regLongitude').value=lon;if(status)status.textContent='Location मिल गई। Address खोज रहे हैं…';try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon));const j=await r.json();const a=j.address||{};const line=j.display_name||('Latitude '+lat+', Longitude '+lon);const el=document.getElementById('regAddress');if(el)el.value=line;const city=[a.city,a.town,a.village,a.county,a.state_district].filter(Boolean)[0]||a.state||'';const place=document.getElementById('regPlace');if(place&&city)place.value=city;const pin=document.getElementById('regPincode');if(pin&&a.postcode)pin.value=String(a.postcode).replace(/\D/g,'').slice(0,6);if(status)status.innerHTML='Live address मिल गया। <a href="https://www.google.com/maps?q='+lat+','+lon+'" target="_blank" rel="noopener">Map पर देखें</a>';}catch(e){if(status)status.textContent='GPS coordinates मिल गए; address manually verify/भरें।'}},err=>{if(status)status.textContent='Location नहीं मिली: '+(err.message||'permission denied')+'. Address manually भरें।'},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
-window.completeRegistration=async function(){const name=(document.getElementById('regName')?.value||'').trim(),mobile=(document.getElementById('regMobile')?.value||'').trim(),email=(document.getElementById('regEmail')?.value||'').trim().toLowerCase(),address=(document.getElementById('regAddress')?.value||'').trim(),place=(document.getElementById('regPlace')?.value||'').trim(),pincode=(document.getElementById('regPincode')?.value||'').trim(),latitude=(document.getElementById('regLatitude')?.value||''),longitude=(document.getElementById('regLongitude')?.value||''),referralCode=(document.getElementById('regReferral')?.value||'').trim().toUpperCase();if(name.length<2)return alert('अपना नाम भरें।');if(!/^\d{10}$/.test(mobile))return alert('10 digit mobile number डालें।');if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('Valid Gmail/Email ID डालें या खाली छोड़ें।');if(!address)return alert('पूरा address भरें या live location से प्राप्त करें।');if(pincode&&!/^\d{6}$/.test(pincode))return alert('PIN code 6 digit का होना चाहिए।');try{const password=(document.getElementById('regPassword')?.value||'').trim();if(role==='Provider'&&!/^\d{4}$/.test(password))return alert('Provider registration के लिए 4 digit password जरूरी है।');const j=await api('/auth/register',{method:'POST',body:JSON.stringify({name,mobile,email,place,address,pincode,latitude,longitude,referralCode,role,password})});localStorage.setItem('csz_api_token',j.token);syncUser(j.user);hide('register');hide('login');closeModal('regModal');show('app');applyUser();buildNav();const first=role==='Customer'?'dashboard':role==='Provider'?'provider':'seller';history.replaceState({cszPage:first},'','#'+first);page(first)}catch(e){alert(e.message||'Registration नहीं हो पाया।')}};
+window.completeRegistration=async function(){const name=(document.getElementById('regName')?.value||'').trim(),mobile=(document.getElementById('regMobile')?.value||'').trim(),email=(document.getElementById('regEmail')?.value||'').trim().toLowerCase(),address=(document.getElementById('regAddress')?.value||'').trim(),place=(document.getElementById('regPlace')?.value||'').trim(),pincode=(document.getElementById('regPincode')?.value||'').trim(),latitude=(document.getElementById('regLatitude')?.value||''),longitude=(document.getElementById('regLongitude')?.value||''),referralCode=(document.getElementById('regReferral')?.value||'').trim().toUpperCase();if(name.length<2)return alert('अपना नाम भरें।');if(!/^\d{10}$/.test(mobile))return alert('10 digit mobile number डालें।');if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('Valid Gmail/Email ID डालें या खाली छोड़ें।');if(!address)return alert('पूरा address भरें या live location से प्राप्त करें।');if(pincode&&!/^\d{6}$/.test(pincode))return alert('PIN code 6 digit का होना चाहिए।');try{const password=(document.getElementById('regPassword')?.value||'').trim();if(!/^\d{4}$/.test(password))return alert('सभी roles के लिए 4 अंकों का password जरूरी है।');const j=await api('/auth/register',{method:'POST',body:JSON.stringify({name,mobile,email,place,address,pincode,latitude,longitude,referralCode,role,password})});localStorage.setItem('csz_api_token',j.token);syncUser(j.user);hide('register');hide('login');closeModal('regModal');show('app');applyUser();buildNav();if(j.user.referralCode)alert('Registration सफल! आपकी Referral ID: '+j.user.referralCode+' — इसे share करके referral coupon पा सकते हैं।');const first=role==='Customer'?'dashboard':role==='Provider'?'provider':'seller';history.replaceState({cszPage:first},'','#'+first);page(first)}catch(e){alert(e.message||'Registration नहीं हो पाया।')}};
 window.doLogin=async function(){const selectedRole=role;const byEmail=typeof cszLoginMode!=='undefined'&&cszLoginMode==='email';const identifier=(document.getElementById(byEmail?'loginEmail':'loginMobile')?.value||'').trim();if(byEmail){if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier))return alert('Registered Gmail/Email ID डालें।')}else if(!/^\d{10}$/.test(identifier))return alert('10 digit registered mobile number डालें।');try{const j=await api('/auth/login',{method:'POST',body:JSON.stringify({identifier,loginBy:byEmail?'email':'mobile',role:selectedRole,password:(document.getElementById('loginPassword')?.value||'').trim()})});localStorage.setItem('csz_api_token',j.token);syncUser(j.user);hide('login');hide('register');show('app');applyUser();buildNav();role=j.user.role;const first=role==='Customer'?'dashboard':role==='Provider'?'provider':'seller';history.replaceState({cszPage:first},'','#'+first);page(first)}catch(e){alert(e.message||'इस mobile/email पर account नहीं मिला।')}};
 window.logout=function(){localStorage.removeItem('csz_api_token');currentUser=null;hide('app');show('login')};
 window.verifyOwner=async function(){const key=document.getElementById('ownerKey')?.value||'';try{const j=await api('/auth/admin',{method:'POST',body:JSON.stringify({key})});localStorage.setItem('csz_api_token',j.token);syncUser(j.user);role='Admin';closeModal('ownerModal');hide('register');hide('login');show('app');document.getElementById('userName').textContent='Ranjan Kumar';document.getElementById('userRole').textContent='Owner / Admin';buildAdminNav();adminPageRoute('admin')}catch(e){alert(e.message)}};
@@ -2516,142 +2515,67 @@ if ('serviceWorker' in navigator) {
 
 <script>
 (() => {
-  let deferredInstallPrompt = null;
-  const bar = document.getElementById('csz-pwa-install-bar');
-  const installButton = document.getElementById('csz-pwa-install-button');
-  const dismissButton = document.getElementById('csz-pwa-dismiss-button');
-  if (!bar || !installButton || !dismissButton) return;
-
-  // Keep the banner available on the home page and let users dismiss it.
-  dismissButton.addEventListener('click', () => { bar.style.display = 'none'; });
-  window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault();
-    deferredInstallPrompt = event;
-    installButton.textContent = 'Install Now';
-    installButton.disabled = false;
-  });
-  window.addEventListener('appinstalled', () => {
-    deferredInstallPrompt = null;
-    installButton.textContent = 'Installed';
-    installButton.disabled = true;
-  });
-
-  installButton.addEventListener('click', async () => {
-    if (deferredInstallPrompt) {
-      deferredInstallPrompt.prompt();
-      try {
-        const choice = await deferredInstallPrompt.userChoice;
-        if (choice && choice.outcome === 'accepted') {
-          installButton.textContent = 'Installing…';
-        }
-      } catch (error) {
-        console.error('PWA install prompt failed:', error);
-      }
-      deferredInstallPrompt = null;
-      return;
-    }
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    if (isStandalone) {
-      alert('CivilService Zone पहले से ऐप की तरह खुल रहा है।');
-    } else {
-      alert('अभी Chrome ने इस वेबसाइट के लिए Install Prompt उपलब्ध नहीं कराया। पहले नई PWA फाइलें GitHub पर सही Root Directory में अपलोड करके Render Deployment पूरा करें। फिर Chrome में वेबसाइट खोलें और पेज Refresh करें। अगर फिर भी Install न हो, Chrome के ⋮ मेन्यू में “Add to Home screen” देखें।');
-    }
-  });
+ let deferredInstallPrompt=null;
+ const bar=document.getElementById('csz-pwa-install-bar'),btn=document.getElementById('csz-pwa-install-button'),dismiss=document.getElementById('csz-pwa-dismiss-button');
+ if(!bar||!btn||!dismiss)return;
+ const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+ const hide=()=>{bar.style.display='none'};
+ try{if(localStorage.getItem('csz_install_dismissed')==='1'||localStorage.getItem('csz_installed')==='1'||standalone())hide()}catch(e){}
+ dismiss.addEventListener('click',()=>{hide();try{localStorage.setItem('csz_install_dismissed','1')}catch(e){}});
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;if(!standalone())bar.style.display='flex'});
+ window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;try{localStorage.setItem('csz_installed','1')}catch(e){}hide()});
+ btn.addEventListener('click',async()=>{if(standalone()){hide();return}if(deferredInstallPrompt){deferredInstallPrompt.prompt();try{const c=await deferredInstallPrompt.userChoice;if(c.outcome==='accepted'){try{localStorage.setItem('csz_installed','1')}catch(e){}hide()} }catch(e){}deferredInstallPrompt=null;return}alert('Install विकल्प अभी उपलब्ध नहीं है। Chrome के ⋮ मेन्यू में “Install app” या “Add to Home screen” चुनें।')});
 })();
 </script>
 
 
-<script id="csz-requested-upgrades">
+<style id="csz-requested-upgrades">
+#csz-pwa-install-bar{top:8px!important;right:8px!important;left:auto!important;padding:4px!important}
+#csz-pwa-install-button{font-size:13px!important;padding:8px 13px!important}
+.csz-v4-fab{right:12px!important;bottom:82px!important;padding:9px 12px!important;font-size:13px!important;z-index:9000!important}
+.csz-v4-panel{right:10px!important;bottom:128px!important;width:min(350px,calc(100vw - 20px))!important;height:min(480px,calc(100dvh - 150px))!important}
+#csz-three-dot{position:fixed;right:8px;top:58px;z-index:10020;border:0;border-radius:50%;width:42px;height:42px;background:#123b70;color:white;font-size:25px;box-shadow:0 3px 12px #0003}
+#csz-quick-menu{position:fixed;right:8px;top:104px;z-index:10021;display:none;width:min(270px,calc(100vw - 16px));background:white;border:1px solid #dbe4ee;border-radius:15px;box-shadow:0 12px 35px #0003;padding:8px}
+#csz-quick-menu.show{display:block}
+#csz-quick-menu a,#csz-quick-menu button{display:block;width:100%;text-align:left;padding:11px;border:0;border-radius:9px;background:white;color:#123b70;font-weight:800;text-decoration:none}
+#csz-quick-menu a:hover,#csz-quick-menu button:hover{background:#edf5ff}
+#csz-video-modal{display:none;position:fixed;inset:0;background:#000b;z-index:10030;align-items:center;justify-content:center;padding:12px}
+#csz-video-modal.show{display:flex}#csz-video-modal .inner{width:min(850px,100%);background:#fff;padding:10px;border-radius:14px}
+#csz-video-modal video{width:100%;max-height:75dvh;background:#000}
+.csz-live-location{margin-top:5px}
+@media(max-width:600px){#csz-three-dot{top:55px;right:7px;width:38px;height:38px} .csz-v4-fab{right:10px!important;bottom:75px!important}}
+</style>
+<button id="csz-three-dot" aria-label="More options" type="button">⋮</button>
+<div id="csz-quick-menu">
+ <a href="#" id="csz-refer-app">🔗 Refer app / Share app</a>
+ <button id="csz-menu-install">📲 Install app</button>
+ <a href="tel:7856815062">📞 Call help: 7856815062</a>
+ <a target="_blank" rel="noopener" href="https://wa.me/917856815062?text=Hello.%20Dear%20RANJAN%20SIR.%20I%20have%20inquiry%20related%20to%20CivilService%20Zone.">🟢 WhatsApp help</a>
+ <button id="csz-menu-video">▶ Video</button>
+ <button id="csz-menu-ai">🤖 AI Help</button>
+ <button id="csz-menu-theme">🎨 Change theme color</button>
+</div>
+<div id="csz-video-modal"><div class="inner"><div style="display:flex;justify-content:space-between;align-items:center;padding:5px"><b>CivilService Zone Video</b><button id="csz-video-close" class="btn">Close ✕</button></div><video id="csz-intro-video" controls playsinline preload="metadata" src="/1000073799.mp4"></video><button id="csz-share-video" class="btn primary" style="margin-top:8px">Share video</button></div></div>
+<script>
 (function(){
- const PHONE='7856815062', WA='https://wa.me/917856815062?text='+encodeURIComponent('Hello. Dear RANJAN SIR.  I have inquiry related to CivilService Zone.');
- const $=id=>document.getElementById(id);
- const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
- // Persist login on this device until explicit logout.
- try { const saved=localStorage.getItem('csz_active_user'); if(saved&&!window.currentUser){window.currentUser=JSON.parse(saved);} }catch(e){}
- function ensureField(parentId,id,label,placeholder,type='text'){
-   const parent=$(parentId); if(!parent||$(id))return $(id);
-   const wrap=document.createElement('div');wrap.className='field';wrap.style.marginTop='10px';
-   const lab=document.createElement('label');lab.textContent=label;
-   const input=document.createElement(type==='textarea'?'textarea':'input');input.id=id;input.placeholder=placeholder;
-   if(type!=='textarea')input.type=type; if(type==='password'){input.inputMode='numeric';input.maxLength=4;input.autocomplete='new-password'}
-   wrap.append(lab,input);const btn=parent.querySelector('button');parent.insertBefore(wrap,btn||null);return input;
- }
- // Add referral code input to registration dialog.
- const regModal=$('regModal');
- if(regModal){
-   const box=regModal.querySelector('.modalBox')||regModal;
-   if(!$('regReferralCode')){const w=document.createElement('div');w.className='field';w.style.marginTop='10px';w.innerHTML='<label>Referral ID (Optional)</label><input id="regReferralCode" placeholder="Referral ID डालें, यदि है" autocomplete="off">';const submit=box.querySelector('button[onclick*="completeRegistration"]');box.insertBefore(w,submit||null)}
- }
- const oldStart=window.startRegistration;
- window.startRegistration=function(r){ if(typeof oldStart==='function')oldStart(r); else {window.role=r; $('regModal')?.classList.remove('hidden')} const f=$('regPassword');if(f){f.required=true;f.placeholder='4 अंकों का password';} if($('regReferralCode'))$('regReferralCode').value=''; };
- window.completeRegistration=function(){
-   const name=$('regName')?.value.trim()||'',mobile=$('regMobile')?.value.trim()||'',place=$('regPlace')?.value||'',password=$('regPassword')?.value||'',ref=$('regReferralCode')?.value.trim().toUpperCase()||'';
-   const chosen=window.role||role||'Customer';
-   if(name.length<2)return alert('अपना पूरा नाम डालें।');
-   if(!/^\d{10}$/.test(mobile))return alert('10 अंकों का mobile number डालें।');
-   if(!/^\d{4}$/.test(password))return alert('Password ठीक 4 अंकों का होना चाहिए।');
-   if(users.some(u=>u.mobile===mobile))return alert('यह mobile number पहले से registered है। Login करें या सही registered account चुनें।');
-   let referrer=null;
-   if(ref){referrer=users.find(u=>(u.referralCode||'').toUpperCase()===ref);if(!referrer)return alert('यह Referral ID नहीं मिली। सही ID डालें या खाली छोड़ें।');}
-   const newUser={id:Date.now(),name,mobile,place,role:chosen,password,referralCode:'CSZ'+Math.random().toString(36).slice(2,8).toUpperCase(),referredBy:ref, rewardCoupons:[],date:new Date().toISOString()};
-   if(referrer){referrer.rewardCoupons=Array.isArray(referrer.rewardCoupons)?referrer.rewardCoupons:[];referrer.rewardCoupons.push({code:'REF-'+newUser.id.toString().slice(-6),title:'Referral Coupon',status:'Available',createdAt:new Date().toISOString()});}
-   users.push(newUser);localStorage.setItem('cch_users',JSON.stringify(users));window.currentUser=newUser;localStorage.setItem('csz_active_user',JSON.stringify(newUser));
-   if(typeof closeModal==='function')closeModal('regModal');if(typeof hide==='function'){hide('register');hide('login');hide('regModal');show('app');}
-   if(typeof applyUser==='function')applyUser();if(typeof buildNav==='function')buildNav();if(typeof page==='function')page(chosen==='Customer'?'dashboard':chosen==='Provider'?'provider':'seller');
-   alert('Registration सफल! आपका Referral ID: '+newUser.referralCode);
- };
- window.doLogin=function(){
-   const mobile=$('loginMobile')?.value.trim()||'',password=$('loginPassword')?.value||'',chosen=window.role||role||'Customer';
-   if(!/^\d{10}$/.test(mobile))return alert('Registered 10 अंकों का mobile number डालें।');
-   if(!/^\d{4}$/.test(password))return alert('4 अंकों का password डालें।');
-   const found=users.find(u=>u.mobile===mobile);
-   if(!found)return alert('यह mobile registered नहीं है। सही number डालें या '+chosen+' में registration करें।');
-   if(found.role!==chosen)return alert('यह number '+found.role+' account में registered है। कृपया '+found.role+' section से login करें।');
-   if(found.password!==password)return alert('Password गलत है। Registration में बनाया गया वही 4 अंकों का password डालें।');
-   window.currentUser=found;localStorage.setItem('csz_active_user',JSON.stringify(found));
-   if(typeof hide==='function'){hide('login');hide('register');show('app');}
-   if(typeof applyUser==='function')applyUser();if(typeof buildNav==='function')buildNav();if(typeof page==='function')page(chosen==='Customer'?'dashboard':chosen==='Provider'?'provider':'seller');
- };
- const oldLogout=window.logout;
- window.logout=function(){localStorage.removeItem('csz_active_user');window.currentUser=null;if(typeof oldLogout==='function')oldLogout();else{hide('app');show('login')}};
- // Install bar: right corner, hide permanently after dismissal/install, and never show in installed mode.
- const bar=$('csz-pwa-install-bar'),ib=$('csz-pwa-install-button'),dismiss=$('csz-pwa-dismiss-button');
- if(bar&&ib){
-   ib.textContent='Install Now';if(dismiss)dismiss.style.display='none';
-   const hideBar=()=>{bar.style.display='none'};
-   if(standalone()||localStorage.getItem('csz_install_hidden')==='1'||localStorage.getItem('csz_installed')==='1')hideBar();
-   if(dismiss)dismiss.onclick=()=>{localStorage.setItem('csz_install_hidden','1');hideBar()};
-   window.addEventListener('appinstalled',()=>{localStorage.setItem('csz_installed','1');hideBar()});
-   bar.style.left='auto';bar.style.right='8px';bar.style.top='8px';
- }
- // Three-dot menu with support, referral, install, theme and supplied video.
- const menu=document.createElement('div');menu.id='csz-more-menu';menu.style.cssText='display:none;position:fixed;right:10px;top:62px;z-index:10050;background:#fff;color:#14243a;padding:8px;border-radius:14px;box-shadow:0 12px 35px #0003;min-width:210px;border:1px solid #dbe4ee';
- menu.innerHTML='<button data-action="refer">📲 Refer App</button><button data-action="install">📥 Install App</button><a href="tel:7856815062">📞 Call Help</a><a target="_blank" rel="noopener" href="'+WA+'">🟢 WhatsApp Help</a><button data-action="video">▶️ Video</button><button data-action="ai">🤖 AI Help</button><button data-action="theme">🎨 Change Theme</button>';
- menu.querySelectorAll('button,a').forEach(b=>{b.style.cssText='display:block;width:100%;text-align:left;padding:10px;border:0;border-radius:8px;background:transparent;color:#14243a;text-decoration:none;font-weight:750;cursor:pointer'});
- document.body.appendChild(menu);
- const more=document.createElement('button');more.id='csz-more-button';more.textContent='⋮';more.setAttribute('aria-label','More options');more.style.cssText='position:fixed;right:8px;top:8px;z-index:10001;border:0;border-radius:10px;width:42px;height:42px;background:#0b4f95;color:#fff;font-size:28px;box-shadow:0 4px 14px #0002;cursor:pointer';
- // Position below install chip so both remain accessible.
- more.style.top='58px';document.body.appendChild(more);
- more.onclick=()=>menu.style.display=menu.style.display==='block'?'none':'block';
- menu.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;menu.style.display='none';const a=b.dataset.action;
- if(a==='install')ib?.click();
- if(a==='refer'){const url=location.href;const msg='CivilService Zone ऐप देखें: '+url;if(navigator.share)navigator.share({title:'CivilService Zone',text:msg,url}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(msg).then(()=>alert('App link copy हो गया।'));else prompt('App link copy करें',url)}
- if(a==='video'){let modal=$('csz-help-video-modal');if(!modal){modal=document.createElement('div');modal.id='csz-help-video-modal';modal.style.cssText='position:fixed;inset:0;background:#000b;z-index:10060;display:flex;align-items:center;justify-content:center;padding:16px';modal.innerHTML='<div style="background:white;padding:12px;border-radius:14px;width:min(720px,100%)"><button id="csz-close-video" style="float:right;padding:8px">Close ✕</button><video controls playsinline style="width:100%;max-height:75vh" src="/help-video.mp4"></video><button id="csz-share-video" style="padding:9px;margin-top:8px">Share Video</button></div>';document.body.appendChild(modal);modal.querySelector('#csz-close-video').onclick=()=>{modal.querySelector('video').pause();modal.remove()};modal.querySelector('#csz-share-video').onclick=()=>{const u=location.origin+'/help-video.mp4';if(navigator.share)navigator.share({title:'CivilService Zone Video',url:u}).catch(()=>{});else navigator.clipboard?.writeText(u).then(()=>alert('Video link copied'))}}else modal.style.display='flex';modal.querySelector('video')?.play().catch(()=>{})}
- if(a==='ai'){document.querySelector('.csz-v4-fab')?.click();document.querySelector('.csz-v4-fab')?.scrollIntoView({block:'nearest'})}
- if(a==='theme'){const colors=['#123b70','#0757a8','#0a7654','#6b2c91','#9c3d12'];const next=colors[(Number(localStorage.getItem('csz_theme_index')||0)+1)%colors.length];localStorage.setItem('csz_theme_index',String((Number(localStorage.getItem('csz_theme_index')||0)+1)%colors.length));document.documentElement.style.setProperty('--blue',next);document.documentElement.style.setProperty('--blue2',next);document.querySelector('.top')?.style.setProperty('background',next,'important');}
- });
- const st=document.createElement('style');st.textContent='.csz-v4-fab{right:12px!important;bottom:12px!important;padding:9px 12px!important;font-size:12px!important;z-index:9000!important}.csz-v4-panel{right:12px!important;bottom:58px!important}';document.head.appendChild(st);
- // Add My Location helper to address fields in any provider listing form; use device permission and never guess location.
- function attachLocationButtons(){document.querySelectorAll('input,textarea').forEach(el=>{if(!/address|location|पता|स्थान/i.test((el.placeholder||'')+' '+(el.id||''))||el.dataset.cszLocation==='1')return;el.dataset.cszLocation='1';const b=document.createElement('button');b.type='button';b.textContent='📍 My Location';b.className='btn';b.style.marginTop='5px';b.onclick=()=>{if(!navigator.geolocation)return alert('इस browser में location उपलब्ध नहीं है।');b.disabled=true;b.textContent='Location खोज रहे हैं…';navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;el.value=(el.value?el.value+' | ':'')+'https://maps.google.com/?q='+lat+','+lon;el.dispatchEvent(new Event('input',{bubbles:true}));b.disabled=false;b.textContent='📍 My Location'},err=>{alert('Location access नहीं मिला। Browser settings में permission दें।');b.disabled=false;b.textContent='📍 My Location'},{enableHighAccuracy:true,timeout:15000})};el.insertAdjacentElement('afterend',b)})}
- new MutationObserver(attachLocationButtons).observe(document.body,{childList:true,subtree:true});attachLocationButtons();
- // Add map links to visible room/transport listings when an address is present.
- new MutationObserver(()=>document.querySelectorAll('.card').forEach(card=>{if(card.querySelector('[data-csz-live-location]'))return;const txt=card.innerText||'';const m=txt.match(/(?:Address|पता|Location|स्थान)\\s*[:：]\\s*([^\\n]+)/i);if(!m)return;const a=document.createElement('a');a.dataset.cszLiveLocation='1';a.className='btn primary';a.target='_blank';a.rel='noopener';a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m[1]);a.textContent='📍 Live Location';card.appendChild(a)})).observe(document.body,{childList:true,subtree:true});
+ const $=id=>document.getElementById(id),menu=$('csz-quick-menu'),bar=$('csz-pwa-install-bar');
+ $('csz-three-dot').addEventListener('click',()=>menu.classList.toggle('show'));
+ document.addEventListener('click',e=>{if(!menu.contains(e.target)&&e.target!==$('csz-three-dot'))menu.classList.remove('show')});
+ $('csz-menu-install').onclick=()=>{$('csz-pwa-install-button')?.click();menu.classList.remove('show')};
+ $('csz-refer-app').onclick=async e=>{e.preventDefault();const share={title:'CivilService Zone',text:'CivilService Zone — घर बनाने से लेकर रहने तक',url:location.origin};try{if(navigator.share)await navigator.share(share);else if(navigator.clipboard){await navigator.clipboard.writeText(location.origin);alert('App link copy हो गया।')}else prompt('App link copy करें',location.origin)}catch(err){}};
+ $('csz-menu-video').onclick=()=>{menu.classList.remove('show');$('csz-video-modal').classList.add('show');$('csz-intro-video').play().catch(()=>{})};
+ $('csz-video-close').onclick=()=>{$('csz-intro-video').pause();$('csz-video-modal').classList.remove('show')};
+ $('csz-share-video').onclick=async()=>{const data={title:'CivilService Zone Video',text:'CivilService Zone video',url:location.origin+'/1000073799.mp4'};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(data.url);alert('Video link copy हो गया।')}}catch(e){}};
+ $('csz-menu-ai').onclick=()=>{menu.classList.remove('show');const ai=document.querySelector('.csz-v4-fab');if(ai)ai.click();else alert('AI Help अभी उपलब्ध नहीं है।')};
+ $('csz-menu-theme').onclick=()=>{const colors=[['Blue','#124e96','#1976d2'],['Green','#126b43','#1a9c61'],['Purple','#563b91','#8461d0'],['Orange','#a94b08','#ef8a17']];let cur=Number(localStorage.getItem('csz_theme')||0),choice=prompt('Theme चुनें: 1 Blue, 2 Green, 3 Purple, 4 Orange',String(cur+1));let n=Number(choice)-1;if(!Number.isInteger(n)||n<0||n>3)return;localStorage.setItem('csz_theme',n);document.documentElement.style.setProperty('--blue',colors[n][1]);document.documentElement.style.setProperty('--blue2',colors[n][2]);document.querySelector('.top')?.style.setProperty('background',`linear-gradient(110deg,${colors[n][1]},${colors[n][2]})`);menu.classList.remove('show')};
+ const setTheme=()=>{const n=Number(localStorage.getItem('csz_theme')||0),c=[['#124e96','#1976d2'],['#126b43','#1a9c61'],['#563b91','#8461d0'],['#a94b08','#ef8a17']][n]||['#124e96','#1976d2'];document.documentElement.style.setProperty('--blue',c[0]);document.documentElement.style.setProperty('--blue2',c[1])};setTheme();
+ // Add "Use my location" to Provider listing address fields whenever the dashboard is rendered.
+ function addLocationButtons(){[['v6ra','v6rd'],['v6ta','v6td']].forEach(([id])=>{const inp=$(id);if(!inp||inp.dataset.locbutton)return;inp.dataset.locbutton='1';const b=document.createElement('button');b.type='button';b.className='btn csz-live-location';b.textContent='📍 Use my location';b.onclick=()=>{if(!navigator.geolocation)return alert('Location इस browser में उपलब्ध नहीं।');b.textContent='Location मिल रही है…';navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon);const j=await r.json();inp.value=j.display_name||`${lat}, ${lon}`;inp.dataset.lat=lat;inp.dataset.lon=lon;b.textContent='✓ Location added'}catch(e){inp.value=`${lat}, ${lon}`;b.textContent='✓ Coordinates added'}},()=>{b.textContent='📍 Use my location';alert('Location permission दें या address manually भरें।')},{enableHighAccuracy:true,timeout:12000})};inp.insertAdjacentElement('afterend',b)})}
+ setInterval(addLocationButtons,900);
+ // Customer map shortcuts are added to room/transport cards using their saved address.
+ const observer=new MutationObserver(()=>{if(!['Customer'].includes(window.role))return;document.querySelectorAll('#v6rooms .card,#v6transport .card').forEach(card=>{if(card.querySelector('.csz-map-link'))return;const p=[...card.querySelectorAll('p')].find(x=>x.textContent.includes('📍'));if(!p)return;const addr=p.textContent.replace('📍','').trim();const b=document.createElement('a');b.className='btn primary csz-map-link';b.target='_blank';b.rel='noopener';b.textContent='🗺️ Live location / Map';b.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(addr);p.insertAdjacentElement('afterend',b)})});
+ observer.observe(document.body,{childList:true,subtree:true});
 })();
-</script>
-
-
-<script id="csz-session-restore">
-window.addEventListener('DOMContentLoaded',function(){try{const u=JSON.parse(localStorage.getItem('csz_active_user')||'null');if(!u)return;window.currentUser=u;if(typeof hide==='function'&&typeof show==='function'){hide('register');hide('login');hide('regModal');show('app');}if(typeof applyUser==='function')applyUser();if(typeof buildNav==='function')buildNav();if(typeof page==='function')page(u.role==='Customer'?'dashboard':u.role==='Provider'?'provider':'seller')}catch(e){console.warn('Saved session could not be restored',e)}});
 </script>
 
 </body>

@@ -17,10 +17,10 @@
 - यह package ऐप को PWA के रूप में installable बनाने के लिए है; deployment के बाद live test करना अभी भी जरूरी है।
 
 
-## CivilService Zone requested update
-- `icons/icon-192.png` and `icons/icon-512.png` use the supplied logo; manifest app name is CivilService Zone.
-- `help-video.mp4` is the supplied help video, served at `/help-video.mp4`.
-- Registration/login UI now requires the same 4-digit password and role, rejects duplicate mobile registration, supports referral IDs and remembers a local session until logout.
-- The top-right ⋮ menu provides app sharing, install, call/WhatsApp help, video, AI help, and theme cycling.
+## इस अपडेट में
+- Customer, Seller और Provider registration में 4 अंकों का password और role-specific login.
+- एक mobile number से दूसरी बार registration रोकना; referral code auto-generate होता है.
+- PWA icon, install button persistence, quick menu, WhatsApp/call help और supplied video.
+- Room/transport form में browser geolocation और customer map link.
 
-Important: authentication and referral rewards in this UI patch are stored in this browser's localStorage. For secure multi-device accounts and server-wide coupon balances, the server API must also be upgraded and tested with PostgreSQL before production use. Location access requires the user to grant browser permission; location links are not continuous GPS tracking.
+ध्यान दें: पुराने accounts जिनमें server database में password नहीं था, नए password check के कारण login नहीं कर पाएँगे। उन्हें सुरक्षित password-reset/migration flow से update करना होगा। Referral coupons इस build में referral registration पर referrer account में record होते हैं; कोई monetary value/payment promise नहीं है। Location access के लिए HTTPS और user permission जरूरी है। Map button saved address को Google Maps में खोलता है; यह GPS live tracking नहीं है।
