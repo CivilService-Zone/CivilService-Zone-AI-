@@ -163,8 +163,8 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
 .csz-v4-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
 .csz-v4-product img{width:100%;height:170px;object-fit:cover;border-radius:13px;background:#eef5fb}
 .csz-v4-product .price{font-size:21px;font-weight:900;color:#0757a8;margin:8px 0}.csz-v4-product .seller{font-size:12px;color:#6b7d91}.csz-v4-chip{display:inline-block;padding:5px 9px;border-radius:999px;background:#edf6ff;color:#0757a8;font-size:12px;font-weight:800;margin:3px}
-.csz-v4-fab{position:fixed;right:12px;bottom:12px;z-index:9997;border:0;border-radius:999px;padding:8px 11px;font-size:12px;background:linear-gradient(135deg,#0757a8,#10b957);color:#fff;font-weight:900;box-shadow:0 12px 28px #063f8344;cursor:pointer}
-.csz-v4-panel{position:fixed;right:10px;bottom:52px;width:min(390px,calc(100vw - 36px));height:min(570px,calc(100vh - 110px));background:#fff;border:1px solid #dfe8f2;border-radius:20px;box-shadow:0 20px 60px #10233f33;z-index:9998;display:none;overflow:hidden}.csz-v4-panel.show{display:flex;flex-direction:column}
+.csz-v4-fab{position:fixed;right:18px;bottom:18px;z-index:9999;border:0;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#0757a8,#10b957);color:#fff;font-weight:900;box-shadow:0 12px 28px #063f8344;cursor:pointer}
+.csz-v4-panel{position:fixed;right:18px;bottom:76px;width:min(390px,calc(100vw - 36px));height:min(570px,calc(100vh - 110px));background:#fff;border:1px solid #dfe8f2;border-radius:20px;box-shadow:0 20px 60px #10233f33;z-index:9998;display:none;overflow:hidden}.csz-v4-panel.show{display:flex;flex-direction:column}
 .csz-v4-head{background:linear-gradient(110deg,#064991,#087fe9);color:#fff;padding:13px 15px;display:flex;justify-content:space-between;align-items:center}.csz-v4-chat{flex:1;overflow:auto;padding:12px;background:#f4f7fb}.csz-v4-msg{max-width:88%;padding:9px 11px;border-radius:13px;margin:7px 0;line-height:1.45;font-size:14px}.csz-v4-user{margin-left:auto;background:#e2f0ff}.csz-v4-ai{background:#fff;border:1px solid #dfe8f2}.csz-v4-input{display:flex;gap:7px;padding:9px;border-top:1px solid #dfe8f2}.csz-v4-input input{flex:1;border:1px solid #cddae7;border-radius:10px;padding:10px}.csz-v4-input button{border:0;border-radius:10px;background:#087ff0;color:#fff;padding:0 13px;font-weight:800}
 .csz-v4-modal{position:fixed;inset:0;background:#061b33aa;z-index:10000;display:none;align-items:center;justify-content:center;padding:18px}.csz-v4-modal.show{display:flex}.csz-v4-modal .box{width:min(560px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 25px 80px #0005}.csz-v4-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.csz-v4-kpi{padding:13px;border:1px solid #dfe8f2;border-radius:13px;background:#fff}.csz-v4-kpi b{display:block;font-size:21px;color:#0757a8}
 .csz-v4-3d{perspective:900px;height:190px;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#dff1ff,#fff);position:relative}.csz-v4-3d .building{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) rotateX(8deg) rotateY(-16deg);width:190px;height:100px;background:linear-gradient(90deg,#e7edf5,#fff);box-shadow:28px 28px 0 #bfd1e4, 0 20px 35px #31506b33}.csz-v4-3d .roof{position:absolute;left:50%;top:28%;transform:translateX(-50%) rotate(-3deg);width:215px;height:48px;background:linear-gradient(135deg,#0757a8,#087ff0);clip-path:polygon(8% 100%,50% 0,92% 100%)}
@@ -194,37 +194,12 @@ body{background:linear-gradient(180deg,#f5f8fc 0%,#eef3f8 100%)}
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
 </head>
 <body>
-<!-- CivilService Zone updated install control -->
-<button id="csz-menu-trigger" type="button" aria-label="Open app menu" title="Menu" style="position:fixed;top:8px;left:8px;z-index:10002;width:40px;height:40px;border:1px solid #d7e3f2;border-radius:13px;background:#fff;color:#123b70;font-size:23px;line-height:1;box-shadow:0 5px 22px #071d3833;cursor:pointer">⋮</button>
-<div id="csz-pwa-install-bar" role="region" aria-label="Install CivilService Zone app" style="position:fixed;top:8px;right:8px;z-index:9999;display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid #d7e3f2;border-radius:999px;padding:5px;box-shadow:0 5px 22px #071d3833;font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:calc(100vw - 60px)">
-  <button id="csz-pwa-install-button" type="button" style="border:0;border-radius:999px;background:#0757a8;color:#fff;font-size:13px;font-weight:800;padding:10px 15px;cursor:pointer;white-space:nowrap">Install Now</button>
+<!-- CivilService Zone PWA install banner -->
+<div id="csz-pwa-install-bar" role="region" aria-label="Install CivilService Zone app" style="position:fixed;top:8px;right:8px;z-index:9999;display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid #d7e3f2;border-radius:999px;padding:6px 8px 6px 12px;box-shadow:0 5px 22px #071d3833;font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:calc(100vw - 16px)">
+  <span style="font-size:12px;font-weight:800;color:#123b70;white-space:nowrap">CivilService Zone</span>
+  <button id="csz-pwa-install-button" type="button" style="border:0;border-radius:999px;background:#0757a8;color:#fff;font-size:13px;font-weight:800;padding:9px 13px;cursor:pointer;white-space:nowrap">Install Now</button>
+  <button id="csz-pwa-dismiss-button" type="button" aria-label="Hide install banner" title="Hide" style="border:0;background:transparent;color:#52657c;font-size:20px;line-height:1;padding:3px 5px;cursor:pointer">×</button>
 </div>
-<div id="csz-app-menu" role="menu" style="display:none;position:fixed;top:54px;left:8px;z-index:10003;width:220px;background:#fff;border:1px solid #d7e3f2;border-radius:16px;padding:8px;box-shadow:0 12px 35px #071d3833;font:600 14px system-ui,-apple-system,Segoe UI,sans-serif">
- <button type="button" data-csz-menu="share" style="display:block;width:100%;padding:11px;border:0;background:#fff;text-align:left;border-radius:9px;color:#123b70">↗ Refer / Share App</button>
- <button type="button" data-csz-menu="install" style="display:block;width:100%;padding:11px;border:0;background:#fff;text-align:left;border-radius:9px;color:#123b70">⬇ Install App</button>
- <button type="button" data-csz-menu="ai" style="display:block;width:100%;padding:11px;border:0;background:#fff;text-align:left;border-radius:9px;color:#123b70">🤖 AI Help</button>
- <div style="padding:8px 10px 4px;color:#65758a;font-size:12px">App theme</div>
- <div style="display:flex;gap:8px;padding:5px 8px 9px"><button data-csz-theme="#123b70" aria-label="Blue theme" style="width:28px;height:28px;border:2px solid #d7e3f2;border-radius:50%;background:#123b70"></button><button data-csz-theme="#087f5b" aria-label="Green theme" style="width:28px;height:28px;border:2px solid #d7e3f2;border-radius:50%;background:#087f5b"></button><button data-csz-theme="#7c2d91" aria-label="Purple theme" style="width:28px;height:28px;border:2px solid #d7e3f2;border-radius:50%;background:#7c2d91"></button><button data-csz-theme="#b45309" aria-label="Orange theme" style="width:28px;height:28px;border:2px solid #d7e3f2;border-radius:50%;background:#b45309"></button></div>
-</div>
-<script>
-(()=>{
- const $=id=>document.getElementById(id), bar=$('csz-pwa-install-bar'), btn=$('csz-pwa-install-button'), menu=$('csz-app-menu');let promptEvent=null;
- const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
- function syncInstall(){if(standalone()){localStorage.setItem('csz_app_installed','1');bar.style.display='none';return}bar.style.display=localStorage.getItem('csz_app_installed')==='1'?'none':'flex'}
- $('csz-menu-trigger').addEventListener('click',()=>{menu.style.display=menu.style.display==='block'?'none':'block'});
- document.addEventListener('click',e=>{if(!menu.contains(e.target)&&e.target!==$('csz-menu-trigger'))menu.style.display='none'});
- window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;syncInstall()});
- window.addEventListener('appinstalled',()=>{localStorage.setItem('csz_app_installed','1');promptEvent=null;syncInstall()});
- async function install(){if(standalone()||localStorage.getItem('csz_app_installed')==='1'){syncInstall();return}if(promptEvent){promptEvent.prompt();const choice=await promptEvent.userChoice;if(choice?.outcome==='accepted'){localStorage.setItem('csz_app_installed','1')}promptEvent=null;syncInstall();return}alert('Install करने के लिए Chrome के ⋮ menu में “Install app” या “Add to Home screen” चुनें।');}
- btn.addEventListener('click',install);
- menu.querySelector('[data-csz-menu="install"]').addEventListener('click',()=>{menu.style.display='none';install()});
- menu.querySelector('[data-csz-menu="share"]').addEventListener('click',async()=>{menu.style.display='none';try{if(navigator.share)await navigator.share({title:'CivilService Zone',text:'CivilService Zone ऐप देखें',url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);alert('App link copied. अब दोस्तों को share करें।')}else prompt('App link copy करें:',location.href)}catch(e){if(e.name!=='AbortError')prompt('App link copy करें:',location.href)}});
- menu.querySelector('[data-csz-menu="ai"]').addEventListener('click',()=>{menu.style.display='none';const b=document.querySelector('.csz-v4-fab');if(b)b.click();else alert('AI Help अभी load हो रहा है। कुछ सेकंड बाद फिर कोशिश करें।')});
- menu.querySelectorAll('[data-csz-theme]').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.cszTheme;document.documentElement.style.setProperty('--csz-theme',c);document.documentElement.style.setProperty('--primary',c);document.documentElement.style.setProperty('--primary-color',c);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',c);localStorage.setItem('csz_theme_color',c)}));
- const saved=localStorage.getItem('csz_theme_color');if(saved){document.documentElement.style.setProperty('--csz-theme',saved);document.documentElement.style.setProperty('--primary',saved);document.documentElement.style.setProperty('--primary-color',saved);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',saved)}
- syncInstall();
-})();
-</script>
 
 <!-- Registration -->
 <section class="auth" id="register">
@@ -2586,8 +2561,98 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
-<script id="csz-map-address-helper">
-window.cszOpenMapAddress=function(address){const a=String(address||'').trim();if(!a){alert('इस listing में location address नहीं दिया गया है।');return}window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(a),'_blank','noopener,noreferrer')};
+<script id="csz-requested-upgrades">
+(function(){
+ const PHONE='7856815062', WA='https://wa.me/917856815062?text='+encodeURIComponent('Hello. Dear RANJAN SIR.  I have inquiry related to CivilService Zone.');
+ const $=id=>document.getElementById(id);
+ const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ // Persist login on this device until explicit logout.
+ try { const saved=localStorage.getItem('csz_active_user'); if(saved&&!window.currentUser){window.currentUser=JSON.parse(saved);} }catch(e){}
+ function ensureField(parentId,id,label,placeholder,type='text'){
+   const parent=$(parentId); if(!parent||$(id))return $(id);
+   const wrap=document.createElement('div');wrap.className='field';wrap.style.marginTop='10px';
+   const lab=document.createElement('label');lab.textContent=label;
+   const input=document.createElement(type==='textarea'?'textarea':'input');input.id=id;input.placeholder=placeholder;
+   if(type!=='textarea')input.type=type; if(type==='password'){input.inputMode='numeric';input.maxLength=4;input.autocomplete='new-password'}
+   wrap.append(lab,input);const btn=parent.querySelector('button');parent.insertBefore(wrap,btn||null);return input;
+ }
+ // Add referral code input to registration dialog.
+ const regModal=$('regModal');
+ if(regModal){
+   const box=regModal.querySelector('.modalBox')||regModal;
+   if(!$('regReferralCode')){const w=document.createElement('div');w.className='field';w.style.marginTop='10px';w.innerHTML='<label>Referral ID (Optional)</label><input id="regReferralCode" placeholder="Referral ID डालें, यदि है" autocomplete="off">';const submit=box.querySelector('button[onclick*="completeRegistration"]');box.insertBefore(w,submit||null)}
+ }
+ const oldStart=window.startRegistration;
+ window.startRegistration=function(r){ if(typeof oldStart==='function')oldStart(r); else {window.role=r; $('regModal')?.classList.remove('hidden')} const f=$('regPassword');if(f){f.required=true;f.placeholder='4 अंकों का password';} if($('regReferralCode'))$('regReferralCode').value=''; };
+ window.completeRegistration=function(){
+   const name=$('regName')?.value.trim()||'',mobile=$('regMobile')?.value.trim()||'',place=$('regPlace')?.value||'',password=$('regPassword')?.value||'',ref=$('regReferralCode')?.value.trim().toUpperCase()||'';
+   const chosen=window.role||role||'Customer';
+   if(name.length<2)return alert('अपना पूरा नाम डालें।');
+   if(!/^\d{10}$/.test(mobile))return alert('10 अंकों का mobile number डालें।');
+   if(!/^\d{4}$/.test(password))return alert('Password ठीक 4 अंकों का होना चाहिए।');
+   if(users.some(u=>u.mobile===mobile))return alert('यह mobile number पहले से registered है। Login करें या सही registered account चुनें।');
+   let referrer=null;
+   if(ref){referrer=users.find(u=>(u.referralCode||'').toUpperCase()===ref);if(!referrer)return alert('यह Referral ID नहीं मिली। सही ID डालें या खाली छोड़ें।');}
+   const newUser={id:Date.now(),name,mobile,place,role:chosen,password,referralCode:'CSZ'+Math.random().toString(36).slice(2,8).toUpperCase(),referredBy:ref, rewardCoupons:[],date:new Date().toISOString()};
+   if(referrer){referrer.rewardCoupons=Array.isArray(referrer.rewardCoupons)?referrer.rewardCoupons:[];referrer.rewardCoupons.push({code:'REF-'+newUser.id.toString().slice(-6),title:'Referral Coupon',status:'Available',createdAt:new Date().toISOString()});}
+   users.push(newUser);localStorage.setItem('cch_users',JSON.stringify(users));window.currentUser=newUser;localStorage.setItem('csz_active_user',JSON.stringify(newUser));
+   if(typeof closeModal==='function')closeModal('regModal');if(typeof hide==='function'){hide('register');hide('login');hide('regModal');show('app');}
+   if(typeof applyUser==='function')applyUser();if(typeof buildNav==='function')buildNav();if(typeof page==='function')page(chosen==='Customer'?'dashboard':chosen==='Provider'?'provider':'seller');
+   alert('Registration सफल! आपका Referral ID: '+newUser.referralCode);
+ };
+ window.doLogin=function(){
+   const mobile=$('loginMobile')?.value.trim()||'',password=$('loginPassword')?.value||'',chosen=window.role||role||'Customer';
+   if(!/^\d{10}$/.test(mobile))return alert('Registered 10 अंकों का mobile number डालें।');
+   if(!/^\d{4}$/.test(password))return alert('4 अंकों का password डालें।');
+   const found=users.find(u=>u.mobile===mobile);
+   if(!found)return alert('यह mobile registered नहीं है। सही number डालें या '+chosen+' में registration करें।');
+   if(found.role!==chosen)return alert('यह number '+found.role+' account में registered है। कृपया '+found.role+' section से login करें।');
+   if(found.password!==password)return alert('Password गलत है। Registration में बनाया गया वही 4 अंकों का password डालें।');
+   window.currentUser=found;localStorage.setItem('csz_active_user',JSON.stringify(found));
+   if(typeof hide==='function'){hide('login');hide('register');show('app');}
+   if(typeof applyUser==='function')applyUser();if(typeof buildNav==='function')buildNav();if(typeof page==='function')page(chosen==='Customer'?'dashboard':chosen==='Provider'?'provider':'seller');
+ };
+ const oldLogout=window.logout;
+ window.logout=function(){localStorage.removeItem('csz_active_user');window.currentUser=null;if(typeof oldLogout==='function')oldLogout();else{hide('app');show('login')}};
+ // Install bar: right corner, hide permanently after dismissal/install, and never show in installed mode.
+ const bar=$('csz-pwa-install-bar'),ib=$('csz-pwa-install-button'),dismiss=$('csz-pwa-dismiss-button');
+ if(bar&&ib){
+   ib.textContent='Install Now';if(dismiss)dismiss.style.display='none';
+   const hideBar=()=>{bar.style.display='none'};
+   if(standalone()||localStorage.getItem('csz_install_hidden')==='1'||localStorage.getItem('csz_installed')==='1')hideBar();
+   if(dismiss)dismiss.onclick=()=>{localStorage.setItem('csz_install_hidden','1');hideBar()};
+   window.addEventListener('appinstalled',()=>{localStorage.setItem('csz_installed','1');hideBar()});
+   bar.style.left='auto';bar.style.right='8px';bar.style.top='8px';
+ }
+ // Three-dot menu with support, referral, install, theme and supplied video.
+ const menu=document.createElement('div');menu.id='csz-more-menu';menu.style.cssText='display:none;position:fixed;right:10px;top:62px;z-index:10050;background:#fff;color:#14243a;padding:8px;border-radius:14px;box-shadow:0 12px 35px #0003;min-width:210px;border:1px solid #dbe4ee';
+ menu.innerHTML='<button data-action="refer">📲 Refer App</button><button data-action="install">📥 Install App</button><a href="tel:7856815062">📞 Call Help</a><a target="_blank" rel="noopener" href="'+WA+'">🟢 WhatsApp Help</a><button data-action="video">▶️ Video</button><button data-action="ai">🤖 AI Help</button><button data-action="theme">🎨 Change Theme</button>';
+ menu.querySelectorAll('button,a').forEach(b=>{b.style.cssText='display:block;width:100%;text-align:left;padding:10px;border:0;border-radius:8px;background:transparent;color:#14243a;text-decoration:none;font-weight:750;cursor:pointer'});
+ document.body.appendChild(menu);
+ const more=document.createElement('button');more.id='csz-more-button';more.textContent='⋮';more.setAttribute('aria-label','More options');more.style.cssText='position:fixed;right:8px;top:8px;z-index:10001;border:0;border-radius:10px;width:42px;height:42px;background:#0b4f95;color:#fff;font-size:28px;box-shadow:0 4px 14px #0002;cursor:pointer';
+ // Position below install chip so both remain accessible.
+ more.style.top='58px';document.body.appendChild(more);
+ more.onclick=()=>menu.style.display=menu.style.display==='block'?'none':'block';
+ menu.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;menu.style.display='none';const a=b.dataset.action;
+ if(a==='install')ib?.click();
+ if(a==='refer'){const url=location.href;const msg='CivilService Zone ऐप देखें: '+url;if(navigator.share)navigator.share({title:'CivilService Zone',text:msg,url}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(msg).then(()=>alert('App link copy हो गया।'));else prompt('App link copy करें',url)}
+ if(a==='video'){let modal=$('csz-help-video-modal');if(!modal){modal=document.createElement('div');modal.id='csz-help-video-modal';modal.style.cssText='position:fixed;inset:0;background:#000b;z-index:10060;display:flex;align-items:center;justify-content:center;padding:16px';modal.innerHTML='<div style="background:white;padding:12px;border-radius:14px;width:min(720px,100%)"><button id="csz-close-video" style="float:right;padding:8px">Close ✕</button><video controls playsinline style="width:100%;max-height:75vh" src="/help-video.mp4"></video><button id="csz-share-video" style="padding:9px;margin-top:8px">Share Video</button></div>';document.body.appendChild(modal);modal.querySelector('#csz-close-video').onclick=()=>{modal.querySelector('video').pause();modal.remove()};modal.querySelector('#csz-share-video').onclick=()=>{const u=location.origin+'/help-video.mp4';if(navigator.share)navigator.share({title:'CivilService Zone Video',url:u}).catch(()=>{});else navigator.clipboard?.writeText(u).then(()=>alert('Video link copied'))}}else modal.style.display='flex';modal.querySelector('video')?.play().catch(()=>{})}
+ if(a==='ai'){document.querySelector('.csz-v4-fab')?.click();document.querySelector('.csz-v4-fab')?.scrollIntoView({block:'nearest'})}
+ if(a==='theme'){const colors=['#123b70','#0757a8','#0a7654','#6b2c91','#9c3d12'];const next=colors[(Number(localStorage.getItem('csz_theme_index')||0)+1)%colors.length];localStorage.setItem('csz_theme_index',String((Number(localStorage.getItem('csz_theme_index')||0)+1)%colors.length));document.documentElement.style.setProperty('--blue',next);document.documentElement.style.setProperty('--blue2',next);document.querySelector('.top')?.style.setProperty('background',next,'important');}
+ });
+ const st=document.createElement('style');st.textContent='.csz-v4-fab{right:12px!important;bottom:12px!important;padding:9px 12px!important;font-size:12px!important;z-index:9000!important}.csz-v4-panel{right:12px!important;bottom:58px!important}';document.head.appendChild(st);
+ // Add My Location helper to address fields in any provider listing form; use device permission and never guess location.
+ function attachLocationButtons(){document.querySelectorAll('input,textarea').forEach(el=>{if(!/address|location|पता|स्थान/i.test((el.placeholder||'')+' '+(el.id||''))||el.dataset.cszLocation==='1')return;el.dataset.cszLocation='1';const b=document.createElement('button');b.type='button';b.textContent='📍 My Location';b.className='btn';b.style.marginTop='5px';b.onclick=()=>{if(!navigator.geolocation)return alert('इस browser में location उपलब्ध नहीं है।');b.disabled=true;b.textContent='Location खोज रहे हैं…';navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;el.value=(el.value?el.value+' | ':'')+'https://maps.google.com/?q='+lat+','+lon;el.dispatchEvent(new Event('input',{bubbles:true}));b.disabled=false;b.textContent='📍 My Location'},err=>{alert('Location access नहीं मिला। Browser settings में permission दें।');b.disabled=false;b.textContent='📍 My Location'},{enableHighAccuracy:true,timeout:15000})};el.insertAdjacentElement('afterend',b)})}
+ new MutationObserver(attachLocationButtons).observe(document.body,{childList:true,subtree:true});attachLocationButtons();
+ // Add map links to visible room/transport listings when an address is present.
+ new MutationObserver(()=>document.querySelectorAll('.card').forEach(card=>{if(card.querySelector('[data-csz-live-location]'))return;const txt=card.innerText||'';const m=txt.match(/(?:Address|पता|Location|स्थान)\\s*[:：]\\s*([^\\n]+)/i);if(!m)return;const a=document.createElement('a');a.dataset.cszLiveLocation='1';a.className='btn primary';a.target='_blank';a.rel='noopener';a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m[1]);a.textContent='📍 Live Location';card.appendChild(a)})).observe(document.body,{childList:true,subtree:true});
+})();
 </script>
+
+
+<script id="csz-session-restore">
+window.addEventListener('DOMContentLoaded',function(){try{const u=JSON.parse(localStorage.getItem('csz_active_user')||'null');if(!u)return;window.currentUser=u;if(typeof hide==='function'&&typeof show==='function'){hide('register');hide('login');hide('regModal');show('app');}if(typeof applyUser==='function')applyUser();if(typeof buildNav==='function')buildNav();if(typeof page==='function')page(u.role==='Customer'?'dashboard':u.role==='Provider'?'provider':'seller')}catch(e){console.warn('Saved session could not be restored',e)}});
+</script>
+
 </body>
 </html>

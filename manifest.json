@@ -2,7 +2,7 @@
   "id": "/",
   "name": "CivilService Zone",
   "short_name": "CivilService Zone",
-  "description": "CivilService Zone \u2014 Build, Plan, Estimate and Live",
+  "description": "CivilService Zone — Build, Plan, Estimate and Live",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -14,7 +14,7 @@
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512.png",
