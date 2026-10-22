@@ -1,0 +1,18 @@
+CivilService Zone — Updated Package
+
+इस अपडेट में:
+- ऊपर बाईं ओर 3-dot menu: Refer/Share App, Install App, AI Help और theme colors.
+- ऊपर दाईं ओर केवल “Install Now” button.
+- App install/standalone mode detect होने पर install button छिपाने की कोशिश; appinstalled marker local browser में save होता है.
+- AI Help floating button छोटा और नीचे दाईं ओर रखा गया.
+- manifest icons के लिए 192px और 512px icons शामिल.
+- Google Maps address helper शामिल: cszOpenMapAddress(address).
+
+जरूरी सीमा:
+इस पैकेज में वास्तविक SMS OTP delivery, password-based secure registration/login, referral attribution, और listing form में location picker का end-to-end implementation पूरा नहीं है। इन सुविधाओं को चालू करने के लिए SMS provider credentials, backend authentication flow और UI integration की जरूरत है। OTP भेजने का दावा नहीं किया जा रहा है।
+
+Run:
+1. Node.js 20+ install करें.
+2. Project folder में npm install चलाएँ.
+3. npm start चलाएँ.
+4. Deploy करने पर अपने Render environment variables और database configuration पहले जैसे रखें.
